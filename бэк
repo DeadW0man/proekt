@@ -331,6 +331,22 @@ def get_shares():
 
     return jsonify(response), 200
 
+
+@solaris_app.route('/book/<int:book_id>', methods=['DELETE'])
+def delete_book(book_id):
+    if not is_auth_valid():
+        return 'Request denied, invalid session', 403    
+    
+    books = get_book_by_id(book_id)
+
+    cursor = get_db().cursor()
+    cursor.execute(f'DELETE FROM books WHERE id={book_id};')
+    get_db().commit()
+    cursor.close()
+    return "The book was removed", 200
+    
+
+
 #####################
 
 if __name__ == '__main__':
