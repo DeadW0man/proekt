@@ -1,0 +1,24 @@
+services:
+  solaris-app:
+    build: .
+    image: solaris-app:latest
+    container_name: solaris-app
+    ports:
+      - "5000:5000"
+    environment:
+      SOLARIS_SQLITE_PATH: /app/data/dev.db
+      SOLARIS_HOST: 0.0.0.0
+      SOLARIS_PORT: 5000
+      SOLARIS_DEBUG: "0"
+    volumes:
+      - solaris-data:/app/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:5000/', timeout=2)"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+volumes:
+  solaris-data:
