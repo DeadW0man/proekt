@@ -1,10 +1,8 @@
 import sqlite3
 from os import getenv
-
 from flask import g
 
 db_path = getenv('SOLARIS_SQLITE_PATH', 'dev.db')
-
 
 def get_db():
     """Возвращает подключение к БД (одно на запрос)."""
@@ -15,17 +13,13 @@ def get_db():
         db.execute("PRAGMA foreign_keys = ON;")
     return db
 
-
 def close_db(exception=None):
     """Закрывает подключение после обработки запроса (teardown_appcontext)."""
     db = getattr(g, '_database', None)
     if db is not None:
         db.close()
 
-
 def prepare_tables() -> None:
-    # Схема синхронизирована с migrations/start.sql:
-    # books создаётся ДО shares, email UNIQUE, внешние ключи с ON DELETE CASCADE
     db = get_db()
     db.executescript("""
         CREATE TABLE IF NOT EXISTS users (
